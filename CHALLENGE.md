@@ -48,13 +48,13 @@ Now, bridge the gap between internal hospital data and global knowledge. This ag
 
 ---
 
-## Level 4: The Master Orchestrator ("The Final Boss")
+## Level 4: The Orchestrator Agent ("The Final Boss")
 **Complexity: Expert**
 
 With your team of specialists built, you must now build the intelligence that manages them. This introduces the concept of Agent-to-Agent (A2A) orchestration.
 
-*   **Location:** `src/agents/master/`
+*   **Location:** `src/agents/orchestrator/`
 *   **The Mission:** Build a primary interface that acts as a Triage Specialist, routing user requests to the correct sub-agent.
 *   **Key Skills:**
-    *   **Agent-as-a-Tool (A2A):** Use the ADK to register the Doctor, Receptionist, and Researcher agents as `tools` available to the Master Agent.
-    *   **Routing Logic:** Design system instructions that allow the Master Agent to accurately determine user intent, delegate the task, and seamlessly pass the response back to the user without losing context.
+    *   **Agent-as-a-Tool (A2A):** Use the ADK to register the Doctor, Receptionist, and Researcher agents as `tools` available to the Orchestrator Agent.
+    *   **Routing Logic:** Design system instructions that allow the Orchestrator Agent to accurately determine user intent, delegate the task, and seamlessly pass the response back to the user without losing context.

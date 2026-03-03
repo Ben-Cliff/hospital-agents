@@ -9,7 +9,7 @@ The system transitions from a single chatbot to a hierarchy of specialized perso
 *   **🩺 The Doctor Agent:** A clinical resident specialist. It uses RAG to reason over private medical records and provide grounded, cited answers.
 *   **🗓️ The Receptionist Agent:** An administrative specialist. It uses the Model Context Protocol (MCP) to manage appointment scheduling and check availability.
 *   **🔬 The Researcher Agent:** An academic explorer. It synthesizes local patient data with global medical research using Google Search and multi-agent synthesis.
-*   **👑 The Master Orchestrator ("Final Boss"):** The system's triage specialist. It analyzes user intent and delegates tasks to the appropriate sub-agent using Agent-as-a-Tool (A2A) integration.
+*   **👑 The Orchestrator Agent ("Final Boss"):** The system's triage specialist. It analyzes user intent and delegates tasks to the appropriate sub-agent using Agent-as-a-Tool (A2A) integration.
 
 ---
 

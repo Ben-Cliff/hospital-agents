@@ -17,7 +17,7 @@ import asyncio
 from google.adk.runners import InMemoryRunner
 from src.agents.doctor.agent import root_agent as doctor_agent
 from src.agents.receptionist.agent import root_agent as receptionist_agent
-from src.agents.master.agent import root_agent as master_agent
+from src.agents.orchestrator.agent import root_agent as orchestrator_agent
 from src.ingestion.pipeline import run_ingestion
 from src.shared.logger import setup_logger
 from src.shared.validator import validate_datastore
@@ -29,7 +29,7 @@ app_name = os.getenv("APP_NAME", "GenAI-RAG")
 AGENTS = {
     "doctor": doctor_agent,
     "receptionist": receptionist_agent,
-    "master": master_agent,
+    "orchestrator": orchestrator_agent,
 }
 
 

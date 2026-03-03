@@ -12,13 +12,13 @@ from src.agents.receptionist.agent import root_agent as receptionist_agent
 # TODO: Refine this placeholder persona into a "Triage Specialist". 
 # It should be instructed to accurately determine user intent (e.g., medical query, appointment, research)
 # and delegate to the appropriate sub-agent while maintaining context.
-system_prompt = "You are a master agent. Talk to doctor or receptionist if needed."
+system_prompt = "You are an orchestrator agent. Talk to doctor or receptionist if needed."
 
 app_name = os.getenv("APP_NAME", "hospital").lower().replace("-", "_")
 
 # This agent connects the others as tools (Agent-as-a-Tool)
 root_agent = Agent(
-    name=f"{app_name}_master_agent",
+    name=f"{app_name}_orchestrator_agent",
     model="gemini-2.0-flash-lite",
     instruction=system_prompt,
     # TODO: Register the researcher_agent as an AgentTool once it is ready
