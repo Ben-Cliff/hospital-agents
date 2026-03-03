@@ -38,20 +38,6 @@ def run_ingestion(input_dir: str, output_dir: str):
 
     os.makedirs(output_dir, exist_ok=True)
     
-    # =================================================================================================
-    # TODO: HACKATHON CHALLENGE (Pillar 2: Extensibility)
-    #
-    # The current pipeline only processes PDF files. Your challenge is to extend it to support
-    # the new file format you implemented in `src/ingestion/parser.py`.
-    #
-    # REQUIREMENTS:
-    #   1. Modify the `glob` pattern below to include your new file type (e.g., "*.pdf", "*.txt").
-    #   2. Implement logic within the loop to detect the file type and call the appropriate
-    #      parser function (`parse_pdf` or `parse_other_format`).
-    #   3. Ensure the `mimeType` in the `metadata_list` entry is correctly set for your new file type.
-    #
-    # HINT: You can use `file_name.lower().endswith(".your_extension")` to check the file type.
-    # =================================================================================================
     all_files = glob(os.path.join(input_dir, "*.pdf")) # Extend this glob to include your new file type
 
     if not all_files:
@@ -132,9 +118,6 @@ def _generate_local_processed_data(files: list[str], output_dir: str):
                 for page in reader.pages:
                     text_content += page.extract_text() + "\n"
             else:
-                # TODO: HACKATHON CHALLENGE (Pillar 2: Extensibility)
-                # Call your new parser function here for other file types.
-                # Example: text_content = parse_other_format(file_path)
                 text_content = parse_other_format(file_path) # Placeholder
 
             if text_content:

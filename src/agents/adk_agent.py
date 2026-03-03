@@ -17,14 +17,6 @@ from google.genai import types
 import os
 
 
-# TODO: HACKATHON CHALLENGE (Challenge 2, Part 1)
-# The prompt below is static. Your goal is to implement a prompt router
-# that dynamically selects a persona and instructions based on the user's query.
-# For example, a query asking for a summary might use a "summarizer" persona,
-# while a query asking for specific data points might use a "data extractor" persona.
-# You can define different prompt strategies in a new module and then
-# modify this agent to use a router to select one before executing the search.
-
 system_prompt = """
 You are a helpful assistant.
 """

@@ -1,272 +1,97 @@
-# Hackathon Challenge Guide: 
+# Project Migration Challenge: Building a Multi-Agent Hospital System
 
-Welcome to the challenge. This guide outlines opportunities to re-engineer parts of the system. Your success will be evaluated on three challenges:
+Welcome to the migration challenge. This guide outlines the transformation of our single-agent RAG prototype into a sophisticated, modular multi-agent ecosystem. Your mission is to re-engineer the system into a coordinated team of specialized agents.
 
+**The Goal:** Create a scalable hospital assistant with a **Medical Expert**, an **Administrative Receptionist**, and a **Deep Researcher**, all managed by a **Master Orchestrator**.
 
+---
 
-1.  **Completeness:** Did you find and solve the code gaps (TODOs)?
+## Challenge 1: Codebase Sanitization (A Clean Slate)
 
-2.  **Extensibility:** Can your pipeline handle more than just PDFs?
+First, let's clear out the old scaffolding to make way for the new architecture.
 
-3.  **Creativity (ADK):** Can you implement a Multi-Agent system or advanced workflow pattern?
+*   **Task:** Scan all files in the `src/` directory and remove every comment and code block tagged with `# TODO: HACKATHON CHALLENGE`.
+*   **Task:** Once sanitized, this `CHALLENGE.md` file will be deleted, as its purpose will be fulfilled.
 
+---
 
+## Challenge 2: Architecting the Agent Squad (Directory Restructure)
 
------
-
-
-
-## Challenge 1: Completeness (The Code Hunt)
-
-
-
-Your first task is to find the `# TODO: HACKATHON CHALLENGE` flags hidden in the codebase and implement the missing logic.
-
-
-
-**Target Files & Concepts:**
-
-*   `src/ingestion/chunker.py`: The current chunker is a naive, fixed-size example. Your goal is to replace it with a context-aware implementation. The current method uses a simple sliding window, splitting text every 1000 characters with a 100-character overlap. This approach is not context-aware and often breaks sentences and paragraphs, making it a key area for improvement.
-    *   **Semantic Chunking:** Instead of splitting text by a fixed number of characters, this method groups text based on its meaning or topic. This ensures that related sentences and ideas are kept together, providing better context for the agent.
-    *   **Recursive Chunking:** This technique intelligently splits large documents by recursively working through a list of separators (e.g., paragraphs, then sentences, then words). This helps preserve the document's hierarchical structure.
-
-*   `src/search/vertex_client.py`: The current search is good but not great. Your goal is to make it more precise.
-
-    *   **Hybrid Search:** This approach combines the best of both worlds: traditional keyword-based search (great for acronyms and specific terms) and modern vector search (great for understanding context and meaning). The result is a more accurate and relevant set of search results.
-
-    *   **Metadata Filtering:** This allows the system to narrow down the search space *before* executing the query. For example, you could filter to only include documents created in the last year or those written by a specific author. This makes the search faster and the results more focused.
-
-
-
------
-
-
-
-## Challenge 2: Prompt Engineering & Evaluation
-
-
-
-This challenge focuses on the art and science of prompting. A well-designed prompt is crucial for a high-performing agent. This challenge has two parts: making your prompts dynamic and then objectively measuring their quality.
-
-
-
-**Part 1: Agent Persona & Dynamic Prompts**
-
-
-
-The agent is generic. Your goal is to give it clear guardrails and make its instructions dynamic.
-
-
-
-*   **Persona (`src/agents/adk_agent.py`):** This defines the agent's character and style. Is it a formal medical expert, a friendly assistant, or a concise summarizer? A clear persona makes the agent's responses more consistent and predictable.
-
-*   **System Instructions (`src/agents/adk_agent.py`):** These are the hard rules the agent must follow. For example: "Always cite your sources," "Never provide a diagnosis," or "Keep your answers to three sentences or less." This is crucial for ensuring the agent behaves safely and responsibly.
-
-*   **Prompt Routing (`src/agents/adk_agent.py`):** This technique involves creating a router that selects the best prompt template based on the user's query. For example, a query asking for a summary would use a "summarizer" prompt, while a query asking for specific data points would use an "extractor" prompt. This allows the agent to adapt its persona and instructions to the task at hand. You would implement a new module to define different prompt strategies and then modify the agent to use a router to select one before executing the search.
-
-
-
-**Part 2: Prompt Evaluation**
-
-
-
-A good agent isn't just about a good prompt; it's about *measurably* good prompts. This advanced challenge requires you to use the **Vertex AI Gen AI Evaluation Service** to measure and improve the quality of your prompts.
-
-
-
-*   **Create a new script `scripts/run_evaluation.py`**:
-
-    *   This script should use the Vertex AI SDK to run an evaluation job.
-
-    *   It should read a set of test prompts from a file (e.g., a CSV or JSON).
-
-    *   It should evaluate the prompts against a model (e.g., `gemini-1.5-flash-001`) using metrics like `GENERAL_QUALITY`, `SAFETY`, and `RAG_CONTEXT_RELEVANCE`.
-
-
-
-*   **Create a new file `EVALUATION_RESULTS.md`**:
-
-    *   In this file, document your findings.
-
-    *   Include the results of your evaluation runs.
-
-    *   Explain how you used the evaluation results to refine your prompts. What did you change, and why?
-
-    *   Show a before-and-after comparison of your prompts and the corresponding evaluation scores.
-
-
-
-**Resources:**
-
-For code templates and implementation details, refer to the official documentation:
-
-👉 **[Vertex AI Gen AI Evaluation Service](https://cloud.google.com/vertex-ai/generative-ai/docs/models/evaluate-models)**
-
------
-
-
-
-## Challenge 3: Extensibility (The "New Data" Challenge)
-
-
-
-The current pipeline only supports PDFs. In the real world, medical data comes in text files, CSVs, and emails.
-
-
+To ensure each agent can be developed in isolation, we need to restructure the `src/agents/` directory.
 
 **Your Goal:**
-
-Modify the ingestion pipeline to support a new format.
-
-
+Create a modular directory structure that houses each agent's unique persona and toolset.
 
 **Where to Hack:**
+*   Create the following subdirectories inside `src/agents/`:
+    ```text
+    src/agents/
+    ├── doctor/
+    ├── receptionist/
+    ├── researcher/
+    └── master/
+    ```
 
+---
 
+## Challenge 3: Building the Specialists (Agent Development)
 
-1.  **`src/ingestion/parser.py`**:
+Now it's time to build the core of our new system: the specialized agents.
 
+### Part A: The Doctor Agent (The RAG Specialist)
 
+Transform the existing agent into a medical reasoning expert.
 
-      * **Current State:** Only has `parse_pdf`.
+*   **Location:** `src/agents/doctor/`
+*   **Task 1 (Tool Migration):** Move the existing `search_knowledge_base` tool logic into a new `src/agents/doctor/tools.py`.
+*   **Task 2 (Persona Upgrade):** Create an `agent.py` in the directory and give it a high-fidelity "Clinical Resident" persona. The new instructions must prioritize grounding—strictly citing sources from the RAG tool and explicitly stating when information is missing.
 
-            * **Challenge:** Implement `parse_other_format(file_path)`.
+### Part B: The Receptionist Agent (The Action Taker)
 
-        ```python
+Enable the system to interact with external administrative systems.
 
-        def parse_other_format(file_path: str) -> str:
+*   **Location:** `src/agents/receptionist/`
+*   **Task 1 (MCP Implementation):** Implement a new tool in `src/agents/receptionist/tools.py` for appointment scheduling. You'll need to use the **Model Context Protocol (MCP)** libraries already in the environment.
+*   **Task 2 (Persona Focus):** Define a "Hospital Receptionist" persona in `agent.py` focused on gathering missing information (e.g., `patient_name`, `appointment_time`) from the user before executing a tool call.
 
-            # TODO: HACKATHON CHALLENGE (Challenge 2)
+### Part C: The Researcher Agent (The Academic Explorer)
 
-            # Implement logic to read other files than pdf.
+Bridge the gap between the hospital’s private data and global clinical knowledge.
 
-            pass
+*   **Location:** `src/agents/researcher/`
+*   **Task 1 (External Tooling):** Implement a tool in `src/agents/researcher/tools.py` that interfaces with Google Search (via Vertex AI Search or a public search API).
+*   **Task 2 (Persona Focus):** Create a "Medical Researcher" persona in `agent.py` that can synthesize internal data with external search results to answer technical queries.
 
-        ```
+---
 
-2.  **`src/ingestion/pipeline.py`**:
+## Challenge 4: Assembling the Team (The Master Orchestrator)
 
-
-
-      * **Current State:** `glob(os.path.join(input_dir, "*.pdf"))`
-
-      * **Challenge:** Update the pipeline to find other files than pdf and route them to your new parser.
-
-
-
-    <!-- end list -->
-
-
-
-        ```python
-
-        # src/ingestion/pipeline.py
-
-
-
-        def run_ingestion(input_dir, output_dir):
-
-            # TODO: HACKATHON CHALLENGE (Challenge 2)
-
-            # 1. Glob for *.other_format files as well as *.pdf
-
-            # 2. If file ends with .other_format, call parse_other_format() instead of parse_pdf()
-
-            ...
-
-        ```
-
-
-
------
-
-
-
-## Challenge 4: Creativity (The Agent-to-Agent Flow)
-
-
-
-This is an advanced challenge. A single agent is often overwhelmed. We want you to design a **Multi-Agent System** where specialized agents collaborate to solve a problem.
-
-
+With the specialists built, it's time to create the "Final Boss"—the primary interface that manages task delegation.
 
 **Your Goal:**
+Build a master agent that uses the other agents as tools, intelligently routing user requests to the correct specialist.
 
-Build a creative workflow where agents **talk to each other**, **execute tools**, and **write to external systems**. Do not just build a chatbot that summarizes text. Build a system that takes action.
+**Where to Hack:**
+*   **`src/agents/master/agent.py`**:
+    *   **Task 1 (A2A Integration):** Create the master agent configuration. Use the ADK's **Agent-as-a-Tool** feature to pass the Doctor, Receptionist, and Researcher agents into its `tools` parameter.
+    *   **Task 2 (Triage Logic):** Define instructions for the Master Agent to act as a **Triage Specialist**. It must determine user intent and delegate the query to the correct sub-agent.
 
-
-
-**The Workflow Requirements:**
-
-1.  **Agent-to-Agent:** One agent must delegate work to another (e.g., a "Manager" telling a "Worker" what to do).
-
-2.  **Tooling:** Agents must use tools (search, calculation, or custom Python functions).
-
-3.  **External Write:** The system must "do" something with the result (e.g., save a file, send a mock email, or update a status).
-
-
-
-**Simple Design Ideas (Holistic Flows):**
-
-
-
-* **The "Maker-Checker" Flow (Quality Control):**
-
-    * **Agent A (The Writer):** Drafts a response based on the search results.
-
-    * **Agent B (The Auditor):** Reviews that draft against the source text. If it passes, Agent B **executes a tool** to save the final report to a file. If it fails, it sends it back to Agent A.
-
-* **The "Triage" Flow (Delegation):**
-
-    * **Agent A (The Receptionist):** Identifies user intent. If the user wants to "Search," it calls **Agent B (The Researcher)**. If the user wants to "Book," it calls **Agent C (The Scheduler)**.
-
-    * **Action:** The sub-agent performs the specific tool call and returns the result to the Receptionist.
-
-* **The "Drafter-Approver" Flow (Human-in-the-Loop):**
-
-    * **Agent A:** Formulates a plan to "Send a Referral."
-
-    * **Stop:** It pauses and asks the user (you) for confirmation.
-
-    * **Action:** Only upon your "Yes," the agent **writes** the referral to a text file or calls a mock API.
-
-
-
-**Resources:**
-
-For code templates and implementation details, refer to the official ADK Python Agents:
-
-👉 **[Google ADK Python Agents Samples](https://github.com/google/adk-samples/tree/main/python/agents)**
-👉 **[ADK Python Agent-to-Agent Basic Sample](https://github.com/google/adk-python/blob/main/contributing/samples/a2a_basic/README.md)**
-
-
------
-
-
-
-## Evaluation Checklist (For Judges)
-
-
-
-
-
-
-
-Use this rubric to score the teams:
-
-
-
-
-Here is the corrected Markdown table with the spacing fixed and the structure consolidated.
-
-| Category | Criteria | Points (0-5) |
-| --- | --- | --- |
-| **Ingestion** | Did they fix the `chunker.py` TODOs (Semantic/Recursive)? |  |
-| **Data Types** | Can the system successfully ingest and search a file with a different format? |  |
-| **Search** | Did they implement Filtering or Hybrid Search in `vertex_client.py`? |  |
-| **Prompt Engineering** | **(x2 Multiplier)** I Did they implement dynamic prompts and evaluate them? |  |
-| **Architecture** | **(x2 Multiplier)** Is there a functioning Advanced ADK Pattern (Router, Auditor, etc.)? |  |
-| **Stability** | Does the system run without crashing? |  |
 ---
-Total Score: ___ / 45
----
+
+## Challenge 5: Polishing the System (Docs & Finalization)
+
+The final step is to update all documentation and configuration to reflect the new multi-agent architecture.
+
+**Tasks:**
+
+1.  **Documentation Overhaul:**
+    *   **`README.md`:** Rewrite the "How It Works" section to explain the new Orchestrator/sub-agent interaction.
+    *   **`AGENT_ARCHITECTURE.md`:** Create this new file to detail the Agent-to-Agent (A2A) flow and how the Master Agent uses sub-agents as tools.
+
+2.  **Infrastructure & Setup:**
+    *   **`INFRASTRUCTURE_SETUP.md`:** Revise the guide to include any new environment variables required for the Receptionist's MCP tools or the Researcher's search tools.
+    *   **`.env.example`:** Update the template to include placeholders for `ENGINE_ID` and any new API keys, ensuring they are marked as required.
+
+3.  **Finalizing the Entrypoint:**
+    *   **`main.py`:** Update the application's entrypoint to import and run the `master_agent` from `src.agents.master.agent`.
+    *   **Verification:** Ensure the `InMemoryRunner` initializes the multi-agent loop correctly, allowing the Master Agent to call sub-agents without crashing.
