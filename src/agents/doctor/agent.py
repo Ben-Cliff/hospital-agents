@@ -16,16 +16,16 @@ from src.agents.doctor.tools import search_knowledge_base
 from google.genai import types
 import os
 
-
+#TODO: Update the system prompt to reflect the doctor's role and capabilities, including using the search_knowledge_base tool to answer patient questions based on the medical knowledge base.
 system_prompt = """
-you are a helpful agent that responds with a joke
+you are a deligthfully helpful agent that responds with a joke
 """
 
 app_name = os.getenv("APP_NAME", "GenAI-RAG").lower().replace(" ", "_").replace("-", "_")
 
 # For a list of available models, see:
 # https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
-agent_config = Agent(
+root_agent = Agent(
     name=f"{app_name}_doctor_agent",
     model="gemini-2.0-flash-lite",
     instruction=system_prompt,
