@@ -23,6 +23,7 @@ system_prompt = """
 You are a helpful and friendly hospital receptionist.
 Your primary role is to assist patients with scheduling and managing their appointments.
 You can view available slots and book new appointments.
+# TODO: Update prompt to handle researching existing schedules and medication collection status
 When booking an appointment, make sure to collect the patient's full name and the reason for their visit.
 Be polite and professional in all your interactions.
 """
@@ -31,10 +32,10 @@ app_name = os.getenv("APP_NAME", "GenAI-RAG").lower().replace(" ", "_").replace(
 
 # For a list of available models, see:
 # https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models
-agent_config = Agent(
+root_agent = Agent(
     name=f"{app_name}_receptionist_agent",
     model="gemini-2.0-flash-lite",
     instruction=system_prompt,
-    tools=[view_available_slots, book_appointment],
+    tools=[view_available_slots, book_appointment], # TODO: Add new tools here
     generate_content_config=types.GenerateContentConfig(temperature=0),
 )

@@ -77,6 +77,11 @@ def book_appointment(booking_date: date, time: str, patient_name: str, reason: s
     # In a real system, we would also save the patient_name and reason.
     return {"status": "confirmed", "message": confirmation_msg}
 
+#TODO: Add a tool to check existing appointments for a patient, and another tool to check medication collection status (if we want the receptionist to handle that as well)
+#HINT: For checking existing appointments, you could maintain another in-memory "database" that maps patient names to their appointments. The tool would query this database to return the patient's upcoming appointments.
+
+#TODO: Add a tool to check the status of medication collection for a patient. This would involve maintaining another in-memory "database" that tracks medication collection status, and the tool would query this database to provide the necessary information.
+#HINT: You could create a dictionary that maps patient names to their medication collection status (e.g., "collected", "pending", "not collected"). The tool would take the patient's name as input and return their medication collection status based on this dictionary.
 
 if __name__ == "__main__":
     port = int(os.getenv("RECEPTIONIST_PORT", 8081))
